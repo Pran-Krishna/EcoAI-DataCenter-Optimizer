@@ -5,7 +5,6 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ecoai-datacenter-optimizer"
 version = "1.0.0"
-description = "AI-powered data center energy optimizer"
 dependencies = [
     "gymnasium",
     "numpy",
@@ -13,3 +12,9 @@ dependencies = [
     "openenv-core",
     "flask"
 ]
+
+[project.scripts]
+server = "server.app:app"
+
+[tool.uv]
+package = true
