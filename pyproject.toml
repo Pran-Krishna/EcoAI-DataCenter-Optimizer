@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ecoai-datacenter-optimizer"
+version = "1.0.0"
+description = "AI-powered data center energy optimizer"
+dependencies = [
+    "gymnasium",
+    "numpy",
+    "openai",
+    "openenv-core",
+    "flask"
+]
