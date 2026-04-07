@@ -1,0 +1,10 @@
+name: eco_server_grid
+version: "1.0.0"
+entry_point: "env:EcoServerManager"
+tasks:
+  - id: "low_load_day"
+    difficulty: "easy"
+  - id: "high_carbon_peak"
+    difficulty: "medium"
+  - id: "emergency_overheat"
+    difficulty: "hard"
