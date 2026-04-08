@@ -1,43 +1,32 @@
-import json
 import os
-from flask import Flask, request, jsonify
-from env import EcoServerManager
+import asyncio
+from server.app import main as run_logic
 
-app = Flask(__name__)
+# Flask sirf Hugging Face ko "Running" rakhne ke liye hai
+try:
+    from flask import Flask, jsonify
+    app = Flask(__name__)
+    @app.route('/')
+    def home(): return jsonify({"status": "ok"}), 200
+    @app.route('/reset', methods=['POST'])
+    def reset(): return jsonify({"status": "ok"}), 200
+except ImportError:
+    app = None
 
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    return jsonify({"status": "ok", "message": "EcoAI Ready"}), 200
-
-@app.route('/reset', methods=['POST'])
-def reset_endpoint():
-    return jsonify({"status": "ok"}), 200
-
-@app.route('/health', methods=['GET'])
-def health():
-    return jsonify({"status": "healthy"}), 200
-
-def run_meta_logic():
-    print("[START] task=high_carbon_peak env=ecoai model=Qwen2.5-72B", flush=True)
+async def start_everything():
+    # 1. Sabse pehle Validator ko uska logic output de do (Mandatory)
+    # Isse Phase 2 ka "Output Parsing" pass ho jayega
     try:
-        env = EcoServerManager(task_id="high_carbon_peak")
-        obs, _ = env.reset()
-        action = 0 if obs[1] > 0.7 else 1 
-        obs, reward, terminated, truncated, info = env.step(action)
-        done = str(terminated or truncated).lower()
-        print(f"[STEP] step=1 action={action} reward={reward:.2f} done={done} error=null", flush=True)
-        print(f"[END] success=true steps=1 score=1.00 rewards={reward:.2f}", flush=True)
+        await run_logic()
     except Exception as e:
-        print(f"[END] success=false steps=0 score=0.00 rewards=0.00", flush=True)
+        print(f"[DEBUG] Logic Error: {e}")
+
+    # 2. Ab Flask chalao taaki Hugging Face "Runtime Error" na de
+    if app:
+        port = int(os.environ.get("PORT", 7860))
+        print(f"[DEBUG] Starting background server on port {port}...")
+        # Use_reloader=False hona chahiye taaki port conflict na ho
+        app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)
 
 if __name__ == "__main__":
-    # Validator ko uska output pehle mil jaye
-    run_meta_logic()
-    
-    # Port ko dynamic rakhte hain taaki collision na ho
-    port = int(os.environ.get("PORT", 7860))
-    try:
-        # Debug=False aur use_reloader=False zaruri hai conflict bachane ke liye
-        app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)
-    except Exception as e:
-        print(f"Server skipped to avoid port conflict: {e}")
+    asyncio.run(start_everything())
