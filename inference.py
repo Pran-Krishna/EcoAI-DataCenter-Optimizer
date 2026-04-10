@@ -20,7 +20,7 @@ async def run_everything():
         @app.route('/reset', methods=['POST'])
         def reset(): return jsonify({"status": "ok"}), 200
         
-        port = int(os.environ.get("PORT", 5000))
+        port = int(os.environ.get("PORT", 0))
         # Agar port free hai (Hugging Face), toh chalega. 
         # Agar busy hai (Phase 2), toh error dega jo hum catch kar lenge!
         app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)
