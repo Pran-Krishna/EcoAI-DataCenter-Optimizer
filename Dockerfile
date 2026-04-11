@@ -10,7 +10,7 @@ COPY . .
 RUN pip install --no-cache-dir gymnasium numpy openai openenv-core flask
 
 # Hugging Face isi port par check karta hai
-#EXPOSE 7860
+EXPOSE 7860
 
 # Main execution command
-CMD ["python", "inference.py"]
+CMD ["python", "app.py"]
