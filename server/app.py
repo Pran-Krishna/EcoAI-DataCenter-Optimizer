@@ -1,6 +1,7 @@
+# server/app.py
 import os
 import asyncio
-from env import EcoServerManager
+from server.environment import EcoServerManager  # Naya path
 
 async def main():
     print(f"[START] task=high_carbon_peak env=ecoai model=Qwen2.5-72B", flush=True)
@@ -16,6 +17,7 @@ async def main():
         print(f"[END] success=true steps={step} score=1.00 rewards=1.00", flush=True)
     except Exception as e:
         print(f"[END] success=false steps=0 score=0.00 rewards=0.00", flush=True)
+        print(f"Logic Error: {e}")
 
 if __name__ == "__main__":
     asyncio.run(main())
